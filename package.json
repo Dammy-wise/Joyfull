@@ -2,7 +2,7 @@
   "name": "joyfull",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./app/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/Dammy-wise/Joyfull/issues"
   },
-  "homepage": "https://github.com/Dammy-wise/Joyfull#readme"
+  "homepage": "https://github.com/Dammy-wise/Joyfull#readme",
+  "dependencies": {
+    "expo": "^54.0.13",
+    "react": "19.1.0",
+    "react-native": "0.81.4"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
 }
