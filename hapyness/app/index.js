@@ -1,18 +1,38 @@
 import { View, Text, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from 'expo-status-bar';
 
 export default function index () {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+
+   useEffect(() => {
+    const load = async () => {
+      const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
+
+      if (!onboardingComplete) {
+        router.replace("/auth/Step1");
+      } else {
+        router.replace("/auth/Signin");
+      }
+
+      setLoading(false);
+    };
+
+    load();
+  }, []);
 
   return (
     <ImageBackground
       source={require('../assets/image/welcome.png')}
       style={styles.container}
-      blurRadius={2}
+      blurRadius={1}
     >
       <StatusBar style="light" />
-      <View style={styles.overlay}>
+
         <View style={styles.content}>
           <Text style={styles.title}>Welcome to,</Text>
           <Text style={styles.subtitle}>Hapyness.</Text>
@@ -33,7 +53,7 @@ export default function index () {
             <Text style={styles.secondaryButtonText}>Signup to Hapyness</Text>
           </TouchableOpacity>
         </View>
-      </View>
+     
     </ImageBackground>
   );
 }
@@ -41,6 +61,8 @@ export default function index () {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    
   },
   overlay: {
     flex: 1,
@@ -52,23 +74,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     paddingBottom: 60,
+    marginBottom: 7,
+    marginHorizontal: 20,
+    
+   
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#fff',
   },
   subtitle: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#fff',
   },
   buttonContainer: {
-    gap: 12,
-    paddingBottom: 40,
+    gap: 14,
+    paddingBottom: 65,
+    backgroundColor: 'rgba(0,0,0,0.7)',
   },
   button: {
     height: 56,
+    marginHorizontal: 8,
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',

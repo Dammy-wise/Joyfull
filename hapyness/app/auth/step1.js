@@ -7,20 +7,36 @@ import
   TouchableOpacity,
   StyleSheet }
  from "react-native";
+ import { useRouter } from 'expo-router';
+ import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default function Step1({ navigation }) {
+
+export default function Step1() {
+
+   
+  const router = useRouter ();
+  const Step2 = async () => {
+   await AsyncStorage.setItem("step1", JSON.stringify({gender: selectedGender}));
+   router.push ('/auth/step2');
+  }
+  
+
+                         
   const [selectedGender, setSelectedGender] = useState(null);
 
   const handleSelect = (gender) => {
     setSelectedGender(gender);
+
   };
 
+    
   return (
+  
     <SafeAreaView style={styles.container}>
       {/* Back and Progress Circles */}
       <View style={styles.header}>
-        <Text style={styles.backText}>← Back</Text>
-        <View style={styles.progressContainer}>
+        <Text style={styles.backText}  onPress={() => router.back()}>← Back  </Text>
+        <View style={styles.progressContainer} >
           {[1, 2, 3].map((step) => (
             <TouchableOpacity
               key={step}
@@ -32,8 +48,12 @@ export default function Step1({ navigation }) {
                   ? styles.nextCircle
                   : styles.nextCircle,
               ]}
-              onPress={() => navigation.navigate(`Step${step}`)}
+              
+             
+               onPress={() => router.replace(`/auth/step${step}`)}
+              
             >
+               
               <Text
                 style={[
                   styles.circleText,
@@ -103,11 +123,13 @@ export default function Step1({ navigation }) {
       {/* Next Step Button */}
       <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => navigation.navigate("Step2")}
-      >
+        onPress={Step2}
+     >
         <Text style={styles.nextButtonText}>Next Step</Text>
       </TouchableOpacity>
+      
     </SafeAreaView>
+        
   );
 }
 

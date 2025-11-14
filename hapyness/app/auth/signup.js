@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -97,7 +97,7 @@ export default function SignUp() {
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={styles.title}>Sing up to,</Text>
+        <Text style={styles.title}>Sign up to,</Text>
         <Text style={styles.title}>Hapnezz</Text>
 
         <View style={styles.form}>

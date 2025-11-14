@@ -4,7 +4,7 @@
     "slug": "joyfull",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/image/icon.png",
     "scheme": "joyfull",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

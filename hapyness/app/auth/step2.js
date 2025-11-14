@@ -6,10 +6,20 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
+ import { useRouter } from 'expo-router';
 import { SafeAreaView } from "react-native-safe-area-context"; // ✅ Correct SafeArea import
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default function Step2({ navigation }) {
+
+
+
+export default function Step2() {
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const router = useRouter ();
+  const Step3 = async () => {
+   await AsyncStorage.setItem("step2", JSON.stringify({categories: selectedCategories}));
+   router.push ('/auth/step3');
+  }
 
   const categories = [
     "#Holidays",
@@ -30,12 +40,13 @@ export default function Step2({ navigation }) {
       setSelectedCategories([...selectedCategories, item]);
     }
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity  onPress={() => router.replace('/auth/step1')} >
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
 
@@ -47,7 +58,7 @@ export default function Step2({ navigation }) {
                 styles.circle,
                 step === 2 ? styles.activeCircle : styles.inactiveCircle,
               ]}
-              onPress={() => navigation.navigate(`Step${step}`)}
+              onPress={() => router.push(`/auth/step${step} `)}
             >
               <Text
                 style={[
@@ -98,7 +109,7 @@ export default function Step2({ navigation }) {
       {/* Next Step Button */}
       <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => navigation.navigate("Step3")}
+        onPress={Step3}
       >
         <Text style={styles.nextButtonText}>Next Step</Text>
       </TouchableOpacity>

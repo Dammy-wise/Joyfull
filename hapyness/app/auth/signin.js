@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,7 +9,8 @@ export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [connectContact, setConnectContact] = useState(false);
+  const [saveLogin, setSaveLogin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -25,8 +26,15 @@ export default function SignIn() {
     if (user) {
       await AsyncStorage.setItem('currentUser', JSON.stringify(user));
       
+      // Save login credentials if checkbox is checked
+      if (saveLogin) {
+        await AsyncStorage.setItem('savedLogin', JSON.stringify({ email, password }));
+      } else {
+        await AsyncStorage.removeItem('savedLogin');
+      }
+      
       if (user.onboardingCompleted) {
-        router.replace('/home');
+        router.replace('/tabs/home');
       } else {
         router.replace('/auth/step1');
       }
@@ -36,7 +44,6 @@ export default function SignIn() {
   };
 
   const handleGoogleSignIn = async () => {
-    // Simulate Google sign-in
     Alert.prompt('Gmail Sign In', 'Enter your Gmail address:', async (googleEmail) => {
       if (!googleEmail) return;
       
@@ -48,7 +55,7 @@ export default function SignIn() {
         await AsyncStorage.setItem('currentUser', JSON.stringify(user));
         if (user.onboardingCompleted) {
           router.replace('/home');
-        } else {
+        } else { 
           router.replace('/auth/step1');
         }
       } else {
@@ -101,26 +108,42 @@ export default function SignIn() {
             autoCapitalize="none"
           />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Input your password here"
-            placeholderTextColor="#666"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Input your password here"
+              placeholderTextColor="#666"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity 
+              style={styles.eyeButton}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Image
+                source={
+                  showPassword
+                    ? require('../../assets/image/eye_open.png')
+                    : require('../../assets/image/eye_closed.png')
+                }
+                style={styles.eyeIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.optionsRow}>
             <TouchableOpacity
               style={styles.checkbox}
-              onPress={() => setConnectContact(!connectContact)}
+              onPress={() => setSaveLogin(!saveLogin)}
             >
               <Ionicons
-                name={connectContact ? "checkmark-sharp" : "square-outline"}
+                name={saveLogin ? "checkmark-sharp" : "square-outline"}
                 size={20}
-                color={connectContact ? "#10B981" : "#666"}
+                color={saveLogin ? "#10B981" : "#666"}
               />
-              <Text style={styles.checkboxText}>Connect Contact</Text>
+              <Text style={styles.checkboxText}>Save Login</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('/auth/forgot-password')}>
@@ -190,6 +213,30 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     marginBottom: 16,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2a2a2a',
+    borderRadius: 12,
+    marginBottom: 16,
+    position: 'relative',
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 16,
+    color: '#fff',
+    fontSize: 14,
+  },
+  eyeButton: {
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  eyeIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#666',
   },
   optionsRow: {
     flexDirection: 'row',

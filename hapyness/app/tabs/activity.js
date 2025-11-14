@@ -10,7 +10,7 @@ export default function Activity() {
     system: [
       {
         id: 1,
-        icon: require('../assets/icon/app-icon.png'),
+        icon: require('../../assets/icons/app-icon.png'),
         message: 'Welcome to Hapyness arma...',
         time: '2m',
       },

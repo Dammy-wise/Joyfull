@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 
@@ -11,9 +12,13 @@ export default function Step3() {
 
   const handleNext = async () => {
     if (!name.trim()) {
-      alert('Please enter your name');
+      Alert.alert('Error', 'Please enter your name');
       return;
     }
+
+    // ✅ Save step3 data
+    await AsyncStorage.setItem("step3", JSON.stringify({ name }));
+    await AsyncStorage.setItem("onboardingComplete", "true");
 
     const currentUserData = await AsyncStorage.getItem('currentUser');
     const currentUser = JSON.parse(currentUserData);
@@ -28,42 +33,50 @@ export default function Step3() {
     users[userIndex] = currentUser;
     await AsyncStorage.setItem('users', JSON.stringify(users));
 
-    router.replace('../tabs/home');
+    // ✅ Navigate to home
+    router.replace('/tabs/home'); // or '/tabs' depending on your structure
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.replace('/auth/step2')}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
 
-        <View style={styles.stepIndicator}>
-          <View style={[styles.step, styles.stepInactive]}>
-            <Text style={styles.stepInactiveText}>1</Text>
-          </View>
-          <View style={[styles.step, styles.stepInactive]}>
-            <Text style={styles.stepInactiveText}>2</Text>
-          </View>
-          <View style={[styles.step, styles.stepActive]}>
-            <Text style={styles.stepActiveText}>3</Text>
-          </View>
+        <View style={styles.progressContainer}>
+          {[1, 2, 3].map((step) => (
+            <TouchableOpacity
+              key={step}
+              style={[
+                styles.circle,
+                step === 3 ? styles.activeCircle : styles.inactiveCircle,
+              ]}
+              onPress={() => router.push(`/auth/step${step}`)}
+            >
+              <Text
+                style={[
+                  styles.circleText,
+                  step === 3 ? styles.activeCircleText : null,
+                ]}
+              >
+                {step}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title}>Tell me your name</Text>
+        <Text style={styles.title}>Tell me your username</Text>
         <Text style={styles.title}>please?</Text>
         <Text style={styles.subtitle}>This help your friend to, find your hapnezz account</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Input your name here...."
+          placeholder="Input your username here...."
           placeholderTextColor="#666"
           value={name}
           onChangeText={setName}
@@ -74,54 +87,30 @@ export default function Step3() {
           <Text style={styles.nextButtonText}>Next Step</Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: "#0d0d0d",
+    padding: 20,
   },
   header: {
-    paddingTop: 60,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 19,
   },
   backText: {
     color: '#fff',
     fontSize: 16,
     marginLeft: 8,
-  },
-  stepIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-  },
-  step: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  stepActive: {
-    backgroundColor: '#EF4444',
-  },
-  stepInactive: {
-    backgroundColor: '#2a2a2a',
-  },
-  stepActiveText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  stepInactiveText: {
-    color: '#666',
   },
   content: {
     flex: 1,
@@ -156,5 +145,29 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  progressContainer: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  circle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activeCircle: {
+    backgroundColor: "#ff3b30",
+  },
+  inactiveCircle: {
+    backgroundColor: "#222",
+  },
+  circleText: {
+    color: "#888",
+    fontWeight: "bold",
+  },
+  activeCircleText: {
+    color: "#fff",
   },
 });
