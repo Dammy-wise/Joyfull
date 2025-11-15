@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {useRouter} from 'expo-router'; 
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = (SCREEN_WIDTH - 6) / 3;
 
 export default function Profile() {
   const [isOwnProfile, setIsOwnProfile] = useState(true); // Set to false when viewing others
-
+  const router = useRouter();
   const user = {
     name: 'Emanuel Watson.',
     username: '@emanuelwatson',
@@ -32,10 +34,10 @@ export default function Profile() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={(() => router.back() )} >
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Image source={{ uri: user.image }} style={styles.headerImage} />
+        
         <TouchableOpacity>
           <Ionicons name="grid" size={24} color="#fff" />
         </TouchableOpacity>

@@ -15,6 +15,25 @@ export default function Step1() {
 
    
   const router = useRouter ();
+  const [loading, setLoading] = useState(true);
+  
+  
+     useEffect(() => {
+      const load = async () => {
+        const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
+  
+        if (!onboardingComplete) {
+          router.replace("/auth/step1");
+        } else {
+          router.replace("/auth/signin");
+        }
+  
+        setLoading(false);
+      };
+  
+      load();
+    }, []);
+  
   const Step2 = async () => {
    await AsyncStorage.setItem("step1", JSON.stringify({gender: selectedGender}));
    router.push ('/auth/step2');

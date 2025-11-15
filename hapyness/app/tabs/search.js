@@ -41,16 +41,16 @@ export default function Search() {
           </Text>
         </TouchableOpacity>
         <View style={styles.tabDivider} />
-        <TouchableOpacity onPress={() => setActiveTab('Trending')}>
+        <TouchableOpacity onPress={() => setActiveTab('Not Following')}>
           <Text
             style={[
               styles.headerTab,
-              activeTab === 'Trending' && styles.headerTabActive,
+              activeTab === 'Not Following' && styles.headerTabActive,
             ]}
           >
-            Trendings
+            Not Following
           </Text>
-          {activeTab === 'Trending' && <View style={styles.trendingDot} />}
+          {activeTab === 'Not Following' && <View style={styles.trendingDot} />}
         </TouchableOpacity>
       </View>
 

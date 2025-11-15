@@ -1,30 +1,12 @@
 import { View, Text, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import {useEffect} from 'react'  ;
 import { useState } from 'react';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from 'expo-status-bar';
 
 export default function index () {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-
-
-   useEffect(() => {
-    const load = async () => {
-      const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
-
-      if (!onboardingComplete) {
-        router.replace("/auth/Step1");
-      } else {
-        router.replace("/auth/Signin");
-      }
-
-      setLoading(false);
-    };
-
-    load();
-  }, []);
-
+  
   return (
     <ImageBackground
       source={require('../assets/image/welcome.png')}

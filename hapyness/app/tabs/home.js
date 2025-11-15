@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions }
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const { width, height } = Dimensions.get('window');
 
 // Mock posts data
@@ -120,6 +120,7 @@ export default function home() {
   const filteredPosts = posts.filter(post => post.category === activeTab);
 
   const renderPost = ({ item }) => (
+  
     <View style={styles.postContainer}>
       <Image source={{ uri: item.image }} style={styles.postImage} />
       
@@ -221,6 +222,7 @@ export default function home() {
         </View>
       </View>
     </View>
+   
   );
 
   return (
@@ -266,6 +268,7 @@ export default function home() {
         decelerationRate="fast"
       />
     </View>
+    
   );
 }
 
@@ -399,12 +402,13 @@ const styles = StyleSheet.create({
   description: {
     color: '#fff',
     fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 12,
+    lineHeight: 19,
+    width: 290,
+    marginBottom: 10,
   },
   downloadButton: {
     backgroundColor: '#10B981',
-    paddingHorizontal: 32,
+    paddingHorizontal: 27,
     paddingVertical: 12,
     borderRadius: 24,
     alignSelf: 'flex-start',
@@ -424,6 +428,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 20,
     alignSelf: 'flex-start',
+    marginBottom: -40,
   },
   musicText: {
     color: '#fff',

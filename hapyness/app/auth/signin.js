@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   eyeIcon: {
     width: 24,
     height: 24,
-    tintColor: '#666',
+    tintColor: '#10B981',
   },
   optionsRow: {
     flexDirection: 'row',

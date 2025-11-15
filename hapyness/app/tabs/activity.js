@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import {useRouter} from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Activity() {
+   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState('All Activity');
 
   const notifications = {
@@ -69,6 +71,15 @@ export default function Activity() {
         },
         time: '2m',
       },
+
+      {
+        id: 8,
+        user: {
+          name: 'Thompson Olan',
+          image: 'https://randomuser.me/api/portraits/men/8.jpg',
+        },
+        time: '3m',
+      },
     ],
   };
 
@@ -76,7 +87,7 @@ export default function Activity() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.replace('/tabs/home')}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Activity</Text>
@@ -272,6 +283,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: '600',
+    color: '#fff',
   },
   notifTime: {
     color: '#666',
