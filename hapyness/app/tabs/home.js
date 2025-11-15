@@ -405,6 +405,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     width: 290,
     marginBottom: 10,
+    
   },
   downloadButton: {
     backgroundColor: '#10B981',

@@ -3,9 +3,36 @@ import { useRouter } from 'expo-router';
 import {useEffect} from 'react'  ;
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
+
+
+SplashScreen.preventAutoHideAsync();
 
 export default function index () {
   const router = useRouter();
+  const [appIsReady, setAppIsReady]= useState(false);
+    useEffect(() => {
+        async function prepare() {
+          try {
+            // Load resources like fonts, images, etc.
+            // await loadAssets(); 
+
+            // Introduce a delay for the splash screen
+            await new Promise(resolve => setTimeout(resolve, 3000)); // 3 seconds delay
+          } catch (e) {
+            console.warn(e);
+          } finally {
+            setAppIsReady(true);
+            SplashScreen.hideAsync();
+          }
+        }
+
+        prepare();
+      }, []);
+
+      if (!appIsReady) {
+        return null; // Or render a custom loading component if needed
+      } 
   
   return (
     <ImageBackground
