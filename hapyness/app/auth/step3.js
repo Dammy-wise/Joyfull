@@ -16,25 +16,30 @@ export default function Step3() {
       return;
     }
 
-    // ✅ Save step3 data
-    await AsyncStorage.setItem("step3", JSON.stringify({ name }));
-    await AsyncStorage.setItem("onboardingComplete", "true");
+    try {
+      // ✅ Save step3 data
+      await AsyncStorage.setItem("step3", JSON.stringify({ name }));
+      await AsyncStorage.setItem("onboardingComplete", "true");
 
-    const currentUserData = await AsyncStorage.getItem('currentUser');
-    const currentUser = JSON.parse(currentUserData);
-    
-    currentUser.name = name;
-    currentUser.onboardingCompleted = true;
-    await AsyncStorage.setItem('currentUser', JSON.stringify(currentUser));
+      const currentUserData = await AsyncStorage.getItem('currentUser');
+      const currentUser = JSON.parse(currentUserData);
+      
+      currentUser.name = name;
+      currentUser.onboardingCompleted = true;
+      await AsyncStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-    const usersData = await AsyncStorage.getItem('users');
-    const users = JSON.parse(usersData);
-    const userIndex = users.findIndex(u => u.id === currentUser.id);
-    users[userIndex] = currentUser;
-    await AsyncStorage.setItem('users', JSON.stringify(users));
+      const usersData = await AsyncStorage.getItem('users');
+      const users = JSON.parse(usersData);
+      const userIndex = users.findIndex(u => u.id === currentUser.id);
+      users[userIndex] = currentUser;
+      await AsyncStorage.setItem('users', JSON.stringify(users));
 
-    // ✅ Navigate to home
-    router.replace('/tabs/home'); // or '/tabs' depending on your structure
+      // ✅ Navigate to home
+      router.replace('/tabs/home');
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      Alert.alert('Error', 'Failed to complete setup. Please try again.');
+    }
   };
 
   return (

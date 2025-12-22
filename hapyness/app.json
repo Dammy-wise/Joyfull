@@ -9,13 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hapyness.joyfull"
     },
     "android": {
+      "package": "com.hapyness.joyfull",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
+        "foregroundImage": "./assets/image/icon.png",
+        "backgroundImage": "./assets/image/icon.png",
         "monochromeImage": "./assets/image/icon.png"
       },
       "edgeToEdgeEnabled": true,
@@ -23,19 +26,19 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/image/icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/icon.png",
+          "image": "./assets/image/icon.png",
           "imageWidth": 100,
           "resizeMode": "contain",
-          "backgroundColor": "#fffff",
+          "backgroundColor": "#ffffff",
           "dark": {
-            "backgroundColor": ""
+            "backgroundColor": "#000000"
           }
         }
       ],
@@ -44,6 +47,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7c3da783-add5-44df-8a12-b42ebb647944"
+      }
     }
   }
 }

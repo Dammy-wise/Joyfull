@@ -5,21 +5,25 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Alert,
 } from "react-native";
- import { useRouter } from 'expo-router';
-import { SafeAreaView } from "react-native-safe-area-context"; // ✅ Correct SafeArea import
-import AsyncStorage from '@react-native-async-storage/async-storage'
-
-
-
+import { useRouter } from 'expo-router';
+import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Step2() {
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const router = useRouter ();
+  const router = useRouter();
+
   const Step3 = async () => {
-   await AsyncStorage.setItem("step2", JSON.stringify({categories: selectedCategories}));
-   router.push ('/auth/step3');
-  }
+    try {
+      await AsyncStorage.setItem("step2", JSON.stringify({categories: selectedCategories}));
+      router.push('/auth/step3');
+    } catch (error) {
+      console.error('Error saving step2 data:', error);
+      Alert.alert('Error', 'Failed to save data. Please try again.');
+    }
+  };
 
   const categories = [
     "#Holidays",
@@ -40,13 +44,12 @@ export default function Step2() {
       setSelectedCategories([...selectedCategories, item]);
     }
   };
-  
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity  onPress={() => router.replace('/auth/step1')} >
+        <TouchableOpacity onPress={() => router.replace('/auth/step1')}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
 
@@ -58,7 +61,7 @@ export default function Step2() {
                 styles.circle,
                 step === 2 ? styles.activeCircle : styles.inactiveCircle,
               ]}
-              onPress={() => router.push(`/auth/step${step} `)}
+              onPress={() => router.push(`/auth/step${step}`)}
             >
               <Text
                 style={[

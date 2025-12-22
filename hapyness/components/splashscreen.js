@@ -5,18 +5,25 @@ export default function Splashscreen({ onFinish }) {
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    Animated.timing(opacity, {
-      toValue: 0,
-      duration: 1200,
-      delay: 800,
-      useNativeDriver: true,
-    }).start(onFinish);
-  }, []);
+    const timer = setTimeout(() => {
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 1200,
+        useNativeDriver: true,
+      }).start(() => {
+        if (onFinish) {
+          onFinish();
+        }
+      });
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [onFinish]);
 
   return (
-    <View style={[styles.container, ]}>
+    <Animated.View style={[styles.container, { opacity }]}>
       <Image source={require('../assets/icon.png')} style={styles.logo} />
-    </View>
+    </Animated.View>
   );
 }
 

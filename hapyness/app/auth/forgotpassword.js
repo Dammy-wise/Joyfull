@@ -24,23 +24,28 @@ export default function ForgotPassword() {
       return;
     }
 
-    const usersData = await AsyncStorage.getItem('users');
-    const users = usersData ? JSON.parse(usersData) : [];
-    const user = users.find(u => u.email === email);
+    try {
+      const usersData = await AsyncStorage.getItem('users');
+      const users = usersData ? JSON.parse(usersData) : [];
+      const user = users.find(u => u.email === email);
 
-    if (!user) {
-      Alert.alert('Error', 'Email incorrect');
-      return;
+      if (!user) {
+        Alert.alert('Error', 'Email incorrect');
+        return;
+      }
+
+      // Generate verification code
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      await AsyncStorage.setItem('verificationCode', verificationCode);
+      await AsyncStorage.setItem('resetEmail', email);
+
+      Alert.alert('Success', `Verification code sent to ${email}`, [
+        { text: 'OK', onPress: () => router.push('/auth/verification') }
+      ]);
+    } catch (error) {
+      console.error('Error during forgot password:', error);
+      Alert.alert('Error', 'Failed to process request. Please try again.');
     }
-
-    // Generate verification code
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    await AsyncStorage.setItem('verificationCode', verificationCode);
-    await AsyncStorage.setItem('resetEmail', email);
-
-    Alert.alert('Success', `Verification code sent to ${email}`, [
-      { text: 'OK', onPress: () => router.push('/auth/verification') }
-    ]);
   };
 
   return (

@@ -35,15 +35,20 @@ export default function Verification() {
       return;
     }
 
-    const savedCode = await AsyncStorage.getItem('verificationCode');
-    
-    if (enteredCode === savedCode) {
-      Alert.alert('Success', 'Code verified!', [
-        { text: 'OK', onPress: () => router.push('/auth/reset-password') }
-      ]);
-    } else {
-      Alert.alert('Error', 'Invalid verification code');
-      setCode(['', '', '', '', '', '']);
+    try {
+      const savedCode = await AsyncStorage.getItem('verificationCode');
+      
+      if (enteredCode === savedCode) {
+        Alert.alert('Success', 'Code verified!', [
+          { text: 'OK', onPress: () => router.push('/auth/resetpassword') }
+        ]);
+      } else {
+        Alert.alert('Error', 'Invalid verification code');
+        setCode(['', '', '', '', '', '']);
+      }
+    } catch (error) {
+      console.error('Error verifying code:', error);
+      Alert.alert('Error', 'Failed to verify code. Please try again.');
     }
   };
 

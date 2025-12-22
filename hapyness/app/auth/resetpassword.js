@@ -28,22 +28,27 @@ export default function ResetPassword() {
       return;
     }
 
-    const resetEmail = await AsyncStorage.getItem('resetEmail');
-    const usersData = await AsyncStorage.getItem('users');
-    const users = JSON.parse(usersData);
-    
-    const userIndex = users.findIndex(u => u.email === resetEmail);
-    if (userIndex !== -1) {
-      users[userIndex].password = newPassword;
-      await AsyncStorage.setItem('users', JSON.stringify(users));
+    try {
+      const resetEmail = await AsyncStorage.getItem('resetEmail');
+      const usersData = await AsyncStorage.getItem('users');
+      const users = JSON.parse(usersData);
       
-      // Clean up
-      await AsyncStorage.removeItem('verificationCode');
-      await AsyncStorage.removeItem('resetEmail');
-      
-      Alert.alert('Success', 'Password changed successfully!', [
-        { text: 'OK', onPress: () => router.replace('/auth/signin') }
-      ]);
+      const userIndex = users.findIndex(u => u.email === resetEmail);
+      if (userIndex !== -1) {
+        users[userIndex].password = newPassword;
+        await AsyncStorage.setItem('users', JSON.stringify(users));
+        
+        // Clean up
+        await AsyncStorage.removeItem('verificationCode');
+        await AsyncStorage.removeItem('resetEmail');
+        
+        Alert.alert('Success', 'Password changed successfully!', [
+          { text: 'OK', onPress: () => router.replace('/auth/signin') }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      Alert.alert('Error', 'Failed to reset password. Please try again.');
     }
   };
 

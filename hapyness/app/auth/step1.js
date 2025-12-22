@@ -1,61 +1,55 @@
-import React, { useState } from "react";
-import {SafeAreaView} from 'react-native-safe-area-context';
-import   
-{ View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet }
- from "react-native";
- import { useRouter } from 'expo-router';
- import AsyncStorage from '@react-native-async-storage/async-storage'
-
+import React, { useState, useEffect } from "react";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Step1() {
-
-   
-  const router = useRouter ();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [selectedGender, setSelectedGender] = useState(null);
   
-  
-     useEffect(() => {
-      const load = async () => {
+  useEffect(() => {
+    const load = async () => {
+      try {
         const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
-  
+
         if (!onboardingComplete) {
           router.replace("/auth/step1");
         } else {
           router.replace("/auth/signin");
         }
-  
-        setLoading(false);
-      };
-  
-      load();
-    }, []);
-  
-  const Step2 = async () => {
-   await AsyncStorage.setItem("step1", JSON.stringify({gender: selectedGender}));
-   router.push ('/auth/step2');
-  }
-  
 
-                         
-  const [selectedGender, setSelectedGender] = useState(null);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading onboarding status:', error);
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  const Step2 = async () => {
+    try {
+      await AsyncStorage.setItem("step1", JSON.stringify({gender: selectedGender}));
+      router.push('/auth/step2');
+    } catch (error) {
+      console.error('Error saving step1 data:', error);
+      Alert.alert('Error', 'Failed to save data. Please try again.');
+    }
+  };
 
   const handleSelect = (gender) => {
     setSelectedGender(gender);
-
   };
 
-    
   return (
-  
     <SafeAreaView style={styles.container}>
       {/* Back and Progress Circles */}
       <View style={styles.header}>
-        <Text style={styles.backText}  onPress={() => router.back()}>← Back  </Text>
-        <View style={styles.progressContainer} >
+        <Text style={styles.backText} onPress={() => router.back()}>← Back</Text>
+        <View style={styles.progressContainer}>
           {[1, 2, 3].map((step) => (
             <TouchableOpacity
               key={step}
@@ -67,12 +61,8 @@ export default function Step1() {
                   ? styles.nextCircle
                   : styles.nextCircle,
               ]}
-              
-             
-               onPress={() => router.replace(`/auth/step${step}`)}
-              
+              onPress={() => router.replace(`/auth/step${step}`)}
             >
-               
               <Text
                 style={[
                   styles.circleText,
@@ -87,7 +77,7 @@ export default function Step1() {
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>What’s your gender?</Text>
+      <Text style={styles.title}>What's your gender?</Text>
       <Text style={styles.subtitle}>
         This helps us find you more relevant content
       </Text>
@@ -143,12 +133,10 @@ export default function Step1() {
       <TouchableOpacity
         style={styles.nextButton}
         onPress={Step2}
-     >
+      >
         <Text style={styles.nextButtonText}>Next Step</Text>
       </TouchableOpacity>
-      
     </SafeAreaView>
-        
   );
 }
 
@@ -215,7 +203,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 12,
     alignItems: "center",
-    paddingVertical: 20,
+    paddingVertical: 29,
   },
   selectedCard: {
     backgroundColor: "#0a2910",
@@ -223,8 +211,8 @@ const styles = StyleSheet.create({
     borderColor: "#00c851",
   },
   genderImage: {
-    width: 100,
-    height: 120,
+    width: 120,
+    height: 140,
     resizeMode: "contain",
   },
   genderText: {

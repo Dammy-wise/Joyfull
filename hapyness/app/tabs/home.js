@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +7,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const { width, height } = Dimensions.get('window');
 
 // Mock posts data
-
 const MOCK_POSTS = [
   {
     id: '1',
@@ -74,21 +73,36 @@ export default function home() {
   }, []);
 
   const loadUser = async () => {
-    const userData = await AsyncStorage.getItem('currentUser');
-    if (userData) {
-      setUser(JSON.parse(userData));
+    try {
+      const userData = await AsyncStorage.getItem('currentUser');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    } catch (error) {
+      console.error('Error loading user:', error);
+      Alert.alert('Error', 'Failed to load user data');
     }
   };
 
   const loadPosts = async () => {
-    const storedPosts = await AsyncStorage.getItem('posts');
-    if (storedPosts) {
-      setPosts(JSON.parse(storedPosts));
+    try {
+      const storedPosts = await AsyncStorage.getItem('posts');
+      if (storedPosts) {
+        setPosts(JSON.parse(storedPosts));
+      }
+    } catch (error) {
+      console.error('Error loading posts:', error);
+      Alert.alert('Error', 'Failed to load posts');
     }
   };
 
   const savePosts = async (updatedPosts) => {
-    await AsyncStorage.setItem('posts', JSON.stringify(updatedPosts));
+    try {
+      await AsyncStorage.setItem('posts', JSON.stringify(updatedPosts));
+    } catch (error) {
+      console.error('Error saving posts:', error);
+      Alert.alert('Error', 'Failed to save posts');
+    }
   };
 
   const toggleLike = (postId) => {
