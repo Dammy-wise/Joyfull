@@ -6,10 +6,9 @@ import Animated, {
   useAnimatedStyle,
   useScrollOffset,
 } from 'react-native-reanimated';
-
-import { ThemedView } from '@/joy/components/themed-view';
-import { useColorScheme } from '@/joy/hooks/use-color-scheme';
-import { useThemeColor } from '@/joy/hooks/use-theme-color';
+import { ThemedView } from './themed-view';
+import { useColorScheme } from '../hooks/use-color-scheme';
+import { useThemeColor } from '../hooks/use-theme-color';
 
 const HEADER_HEIGHT = 250;
 
@@ -27,7 +26,9 @@ export default function ParallaxScrollView({
   const colorScheme = useColorScheme() ?? 'light';
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
+  
   const headerAnimatedStyle = useAnimatedStyle(() => {
+    'worklet';
     return {
       transform: [
         {
@@ -38,22 +39,26 @@ export default function ParallaxScrollView({
           ),
         },
         {
-          scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
+          scale: interpolate(
+            scrollOffset.value, 
+            [-HEADER_HEIGHT, 0, HEADER_HEIGHT], 
+            [2, 1, 1]
+          ),
         },
-      ],
+      ] as any,
     };
   });
 
   return (
     <Animated.ScrollView
       ref={scrollRef}
-      style={{ backgroundColor, flex: 1 }}
+      style={[styles.scrollView, { backgroundColor }]}
       scrollEventThrottle={16}>
       <Animated.View
         style={[
           styles.header,
           { backgroundColor: headerBackgroundColor[colorScheme] },
-          headerAnimatedStyle,
+          headerAnimatedStyle as any,
         ]}>
         {headerImage}
       </Animated.View>
@@ -63,7 +68,7 @@ export default function ParallaxScrollView({
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
   },
   header: {
