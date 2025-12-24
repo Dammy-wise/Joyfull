@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
-    "paths": {
-      "@/*": 
-      ["./"],
-      
-    }
+    "baseUrl": "."
   },
   "include": [
     "**/*.ts",
