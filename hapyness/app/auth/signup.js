@@ -1,15 +1,24 @@
-import { useState } from 'react';
+// hapyness/app/auth/signup.js
+// ✅ FIXED - Working Google auth, Facebook removed
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import * as Google from 'expo-auth-session/providers/google';
-import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as WebBrowser from 'expo-web-browser';
 
 // Required for OAuth to work properly
 WebBrowser.maybeCompleteAuthSession();
+
+// Google OAuth Configuration
+const GOOGLE_CONFIG = {
+  expoClientId: '237274952758-u2a8qnjc1nojstqi5facqqrn02nmaq1p.apps.googleusercontent.com',
+  iosClientId: '237274952758-iu7dcg8q2v7ka9umsaq4ms0vagjsdije.apps.googleusercontent.com',
+  androidClientId: '237274952758-0sl06arlh56232jgvbuto833af4k55rd.apps.googleusercontent.com',
+  webClientId: '237274952758-tnbbbdr3mfv07mppufogc6cijr4v2svi.apps.googleusercontent.com',
+};
 
 const validateEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -23,33 +32,15 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
 
   // Google OAuth Configuration
-  const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
-    expoClientId: '237274952758-u2a8qnjc1nojstqi5facqqrn02nmaq1p.apps.googleusercontent.com',
-    iosClientId: '237274952758-iu7dcg8q2v7ka9umsaq4ms0vagjsdije.apps.googleusercontent.com',
-    androidClientId: '237274952758-0sl06arlh56232jgvbuto833af4k55rd.apps.googleusercontent.com',
-    webClientId: '237274952758-tnbbbdr3mfv07mppufogc6cijr4v2svi.apps.googleusercontent.com',
-  });
-
-  // Facebook OAuth Configuration
-  const [facebookRequest, facebookResponse, facebookPromptAsync] = Facebook.useAuthRequest({
-    clientId: 'YOUR_FACEBOOK_APP_ID',
-  });
+  const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest(GOOGLE_CONFIG);
 
   // Handle Google Sign Up Response
-  React.useEffect(() => {
+  useEffect(() => {
     if (googleResponse?.type === 'success') {
       const { authentication } = googleResponse;
       handleGoogleSignUp(authentication.accessToken);
     }
   }, [googleResponse]);
-
-  // Handle Facebook Sign Up Response
-  React.useEffect(() => {
-    if (facebookResponse?.type === 'success') {
-      const { authentication } = facebookResponse;
-      handleFacebookSignUp(authentication.accessToken);
-    }
-  }, [facebookResponse]);
 
   const handleSignUp = async () => {
     if (!email || !password || !confirmPassword) {
@@ -80,6 +71,7 @@ export default function SignUp() {
       
       if (users.find(u => u.email === email)) {
         Alert.alert('Error', 'Email already registered');
+        setLoading(false);
         return;
       }
 
@@ -160,65 +152,6 @@ export default function SignUp() {
     }
   };
 
-  const handleFacebookSignUp = async (accessToken) => {
-    setLoading(true);
-    
-    try {
-      // Fetch user info from Facebook
-      const response = await fetch(
-        `https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,email,picture.type(large)`
-      );
-      
-      const userInfo = await response.json();
-      
-      if (!userInfo.email) {
-        Alert.alert('Error', 'Unable to retrieve email from Facebook. Please use email signup.');
-        return;
-      }
-      
-      // Check if user already exists
-      const usersData = await AsyncStorage.getItem('users');
-      const users = usersData ? JSON.parse(usersData) : [];
-      
-      let existingUser = users.find(u => u.email === userInfo.email);
-      
-      if (existingUser) {
-        // User exists, log them in
-        await AsyncStorage.setItem('currentUser', JSON.stringify(existingUser));
-        
-        if (existingUser.onboardingCompleted) {
-          router.replace('/tabs/home');
-        } else {
-          router.replace('/auth/step1');
-        }
-      } else {
-        // Create new user
-        const newUser = {
-          id: Date.now().toString(),
-          email: userInfo.email,
-          name: userInfo.name,
-          profilePicture: userInfo.picture?.data?.url,
-          onboardingCompleted: false,
-          createdAt: new Date().toISOString(),
-          authProvider: 'facebook',
-        };
-
-        users.push(newUser);
-        await AsyncStorage.setItem('users', JSON.stringify(users));
-        await AsyncStorage.setItem('currentUser', JSON.stringify(newUser));
-        
-        Alert.alert('Success', 'Facebook account linked successfully!', [
-          { text: 'OK', onPress: () => router.replace('/auth/step1') }
-        ]);
-      }
-    } catch (error) {
-      console.error('Facebook sign up error:', error);
-      Alert.alert('Error', 'Failed to sign up with Facebook. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -277,25 +210,14 @@ export default function SignUp() {
 
           <Text style={styles.orText}>Or</Text>
 
-          <View style={styles.socialButtons}>
-            <TouchableOpacity 
-              style={[styles.gmailButton, loading && styles.disabledButton]} 
-              onPress={() => googlePromptAsync()}
-              disabled={!googleRequest || loading}
-            >
-              <Ionicons name="logo-google" size={20} color="#fff" style={{ marginRight: 8 }} />
-              <Text style={styles.socialButtonText}>Gmail</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.facebookButton, loading && styles.disabledButton]} 
-              onPress={() => facebookPromptAsync()}
-              disabled={!facebookRequest || loading}
-            >
-              <Ionicons name="logo-facebook" size={20} color="#fff" style={{ marginRight: 8 }} />
-              <Text style={styles.socialButtonText}>Facebook</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity 
+            style={[styles.gmailButton, loading && styles.disabledButton]} 
+            onPress={() => googlePromptAsync()}
+            disabled={!googleRequest || loading}
+          >
+            <Ionicons name="logo-google" size={20} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.socialButtonText}>Continue with Gmail</Text>
+          </TouchableOpacity>
 
           <Text style={styles.termsText}>
             By continuing you agree Hapyness{' '}
@@ -366,28 +288,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
-  socialButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 24,
-  },
   gmailButton: {
-    flex: 1,
     backgroundColor: '#EF4444',
     borderRadius: 28,
     padding: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  facebookButton: {
-    flex: 1,
-    backgroundColor: '#3B82F6',
-    borderRadius: 28,
-    padding: 16,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    marginBottom: 24,
   },
   socialButtonText: {
     color: '#fff',

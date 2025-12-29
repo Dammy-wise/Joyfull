@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// hapyness/app/auth/step1.js
+// ✅ FIXED - Removed duplicate router.replace and onboarding check
+import React, { useState } from "react";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useRouter } from 'expo-router';
@@ -6,31 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Step1() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [selectedGender, setSelectedGender] = useState(null);
-  
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const onboardingComplete = await AsyncStorage.getItem("onboardingComplete");
-
-        if (!onboardingComplete) {
-          router.replace("/auth/step1");
-        } else {
-          router.replace("/auth/signin");
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading onboarding status:', error);
-        setLoading(false);
-      }
-    };
-
-    load();
-  }, []);
 
   const Step2 = async () => {
+    if (!selectedGender) {
+      Alert.alert('Error', 'Please select your gender');
+      return;
+    }
+
     try {
       await AsyncStorage.setItem("step1", JSON.stringify({gender: selectedGender}));
       router.push('/auth/step2');
@@ -48,20 +33,17 @@ export default function Step1() {
     <SafeAreaView style={styles.container}>
       {/* Back and Progress Circles */}
       <View style={styles.header}>
-        <Text style={styles.backText} onPress={() => router.back()}>← Back</Text>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={styles.backText}>← Back</Text>
+        </TouchableOpacity>
         <View style={styles.progressContainer}>
           {[1, 2, 3].map((step) => (
-            <TouchableOpacity
+            <View
               key={step}
               style={[
                 styles.circle,
-                step === 1
-                  ? styles.activeCircle
-                  : step === 2
-                  ? styles.nextCircle
-                  : styles.nextCircle,
+                step === 1 ? styles.activeCircle : styles.nextCircle,
               ]}
-              onPress={() => router.replace(`/auth/step${step}`)}
             >
               <Text
                 style={[
@@ -71,7 +53,7 @@ export default function Step1() {
               >
                 {step}
               </Text>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </View>
@@ -131,8 +113,9 @@ export default function Step1() {
 
       {/* Next Step Button */}
       <TouchableOpacity
-        style={styles.nextButton}
+        style={[styles.nextButton, !selectedGender && styles.disabledButton]}
         onPress={Step2}
+        disabled={!selectedGender}
       >
         <Text style={styles.nextButtonText}>Next Step</Text>
       </TouchableOpacity>
@@ -230,6 +213,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     marginTop: 50,
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
   nextButtonText: {
     color: "#fff",
