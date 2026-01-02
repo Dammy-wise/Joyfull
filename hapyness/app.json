@@ -18,8 +18,7 @@
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/icon.png"
-      },
-      "kotlinVersion": "2.0.21"
+      }
     },
     "web": {
       "output": "static",
