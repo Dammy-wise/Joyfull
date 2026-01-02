@@ -44,3 +44,5 @@ app-example
 
 # Android
 android/local.properties
+
+expo-env.d.ts
