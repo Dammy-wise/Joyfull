@@ -3,13 +3,18 @@
 buildscript {
   ext {
     kotlinVersion = '2.0.21' // ✅ UPDATED: Use a KSP-supported Kotlin version
+    // ✅ ADD: Increase build memory
+    buildToolsVersion = "34.0.0"
+    minSdkVersion = 23
+    compileSdkVersion = 34
+    targetSdkVersion = 34
   }
   repositories {
     google()
     mavenCentral()
   }
   dependencies {
-    classpath('com.android.tools.build:gradle')
+    classpath('com.android.tools.build:gradle:8.5.2')
     classpath('com.facebook.react:react-native-gradle-plugin')
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion") // ✅ Use the variable
   }
