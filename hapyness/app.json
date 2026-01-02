@@ -7,6 +7,7 @@
     "icon": "./assets/icon.png",
     "scheme": "joyfull",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": "1.0.0",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hapyness.joyfull"
@@ -48,6 +49,9 @@
       "eas": {
         "projectId": "7c3da783-add5-44df-8a12-b42ebb647944"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7c3da783-add5-44df-8a12-b42ebb647944"
     }
   }
 }
