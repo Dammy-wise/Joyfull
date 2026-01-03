@@ -10,7 +10,8 @@
     "runtimeVersion": "1.0.0",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.hapyness.joyfull"
+      "bundleIdentifier": "com.hapyness.joyfull",
+      "buildNumber": "1"
     },
     "android": {
       "package": "com.hapyness.joyfull",
@@ -36,6 +37,20 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.2.20",
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0",
+            "minSdkVersion": 23,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
       ]
     ],
     "experiments": {
@@ -51,6 +66,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/7c3da783-add5-44df-8a12-b42ebb647944"
+    },
+    "cli": {
+      "appVersionSource": "remote"
     }
   }
 }
